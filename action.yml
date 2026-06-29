@@ -24,7 +24,7 @@ inputs:
     required: true
     default: git.bartoostveen.nl
 
-  forge-user:
+  forge-username:
     description: Forgejo username
     required: true
     default: forgejo
