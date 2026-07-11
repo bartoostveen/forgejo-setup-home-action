@@ -34,6 +34,10 @@ inputs:
     description: Whether to be verbose (log debug SSH config / connection tests)
     required: true
     default: "false"
+  connection-test:
+    description: Whether to perform a connection test
+    required: true
+    default: "true"
 runs:
   using: composite
   steps:
@@ -71,9 +75,13 @@ runs:
           echo "--- START SSH CONFIG ---"
           cat "$HOME/.ssh/config"
           echo "--- END SSH CONFIG ---"
-          echo "Trying to connect..."
         fi
-        ssh "$SSH_FLAGS" -T -F "$HOME/.ssh/config" $FORGE_USERNAME@$FORGE_HOSTNAME
+        if [[ "$CONNECTION_TEST" == "true" ]]; then
+          if [[ "$VERBOSE" == "true" ]]; then
+            echo "Trying to connect..."
+          fi
+          ssh "$SSH_FLAGS" -T -F "$HOME/.ssh/config" $FORGE_USERNAME@$FORGE_HOSTNAME
+        fi
 
         export GIT_SSH_COMMAND="ssh -F "$HOME/.ssh/config""
         echo "GIT_SSH_COMMAND=$GIT_SSH_COMMAND" >> "$FORGEJO_ENV"
@@ -83,6 +91,7 @@ runs:
         FORGE_HOSTNAME: "${{ inputs.forge-hostname }}"
         FORGE_USERNAME: "${{ inputs.forge-username }}"
         VERBOSE: "${{ inputs.verbose }}"
+        CONNECTION_TEST: "${{ inputs.connection-test }}"
     - name: import GPG key
       shell: bash
       if: inputs.gpg-privkey && inputs.gpg-key-id

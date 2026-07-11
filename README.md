@@ -31,6 +31,7 @@ This also does a few connection tests, so your pipeline fails early if SSH is br
 | `git-user-name` | Git committer username, gets used when running <code>git commit</code> | `true` | `forgejo-actions[bot]` |
 | `git-user-email` | Git committer email, gets used when running <code>git commit</code> | `true` | `git@bartoostveen.nl` |
 | `verbose` | Whether to be verbose (log debug SSH config / connection tests) | `true` | `false` |
+| `connection-test` | Whether to perform a connection test | `true` | `true` |
 <!-- action-docs-inputs source="action.yml" -->
 
 <!-- action-docs-outputs source="action.yml" -->
