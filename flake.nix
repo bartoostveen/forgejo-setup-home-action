@@ -36,6 +36,10 @@
         {
           treefmt = {
             programs.actionlint.enable = true;
+            settings.formatter.actionlint.options = [
+              "-config-file"
+              ".forgejo/actionlint.yaml"
+            ];
             programs.nixfmt.enable = true;
             programs.deadnix.enable = true;
             programs.yamlfmt.enable = true;
@@ -49,15 +53,25 @@
                 text = ''
                   set -e
                   for file in "$@"; do
-                    pushd "$(dirname "$file")"
-                    action="$(dirname "$file")/action.yml"
-                    if [ -f "$action" ]; then
-                      action-docs -u -s "$action"
+                    action="$(dirname "$file")/action.yml"  
+                    if [ ! -f "$action" ]; then
+                      continue
                     fi
+
+                    # HACK: because action-docs writes to the file anyway
+                    orig_time=$(stat -c "@%Y" "$file")
+                    pre_hash=$(sha256sum "$file" | cut -d' ' -f1)
+
+                    pushd "$(dirname "$file")"
+                    action-docs -u -s "$action"
+                    popd
 
                     sed -i -e 's|<p>||g' -e 's|</p>||g' "$file"
                     markdownlint -f "$file"
-                    popd
+                    post_hash=$(sha256sum "$file" | cut -d' ' -f1)
+                    if [ "$pre_hash" = "$post_hash" ]; then
+                      touch -d "$orig_time" "$file"
+                    fi
                   done 
                 '';
               };
