@@ -30,6 +30,10 @@ inputs:
     description: Git committer email, gets used when running `git commit`
     required: true
     default: "git@bartoostveen.nl"
+  verbose:
+    description: Whether to be verbose (log debug SSH config / connection tests)
+    required: true
+    default: "false"
 runs:
   using: composite
   steps:
@@ -49,6 +53,7 @@ runs:
         chmod 600 "$HOME/.ssh/id_ed25519"
         printf '%s\n' "$SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
         chmod 644 "$HOME/.ssh/known_hosts"
+
         cat > "$HOME/.ssh/config" <<EOF
         Host $FORGE_HOSTNAME
           IdentityFile "$HOME/.ssh/id_ed25519"
@@ -56,12 +61,19 @@ runs:
           StrictHostKeyChecking yes
           UserKnownHostsFile "$HOME/.ssh/known_hosts"
         EOF
+
         chmod 600 "$HOME/.ssh/config"
-        echo "--- START SSH CONFIG ---"
-        cat "$HOME/.ssh/config"
-        echo "--- END SSH CONFIG ---"
-        echo "Trying to connect..."
-        ssh -vv -T -F "$HOME/.ssh/config" $FORGE_USERNAME@$FORGE_HOSTNAME
+
+        SSH_FLAGS=""
+        if [[ "$VERBOSE" == "true" ]]; then
+          SSH_FLAGS="-vv $SSH_FLAGS"
+
+          echo "--- START SSH CONFIG ---"
+          cat "$HOME/.ssh/config"
+          echo "--- END SSH CONFIG ---"
+          echo "Trying to connect..."
+        fi
+        ssh "$SSH_FLAGS" -T -F "$HOME/.ssh/config" $FORGE_USERNAME@$FORGE_HOSTNAME
 
         export GIT_SSH_COMMAND="ssh -F "$HOME/.ssh/config""
         echo "GIT_SSH_COMMAND=$GIT_SSH_COMMAND" >> "$FORGEJO_ENV"
@@ -70,6 +82,7 @@ runs:
         SSH_KNOWN_HOSTS: "${{ inputs.ssh-known-hosts }}"
         FORGE_HOSTNAME: "${{ inputs.forge-hostname }}"
         FORGE_USERNAME: "${{ inputs.forge-username }}"
+        VERBOSE: "${{ inputs.verbose }}"
     - name: import GPG key
       shell: bash
       if: inputs.gpg-privkey && inputs.gpg-key-id
