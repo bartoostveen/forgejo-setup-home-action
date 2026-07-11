@@ -1,44 +1,35 @@
 name: setup-home
 description: Setup home directory
 author: Bart Oostveen
-
 inputs:
   ssh-private-key:
     description: SSH private key
     required: false
-
   ssh-known-hosts:
     description: SSH known hosts
     required: false
-
   gpg-privkey:
     description: GPG private key
     required: false
-
   gpg-key-id:
     description: GPG key ID
     required: false
-
   forge-hostname:
     description: Forgejo hostname
     required: true
     default: git.bartoostveen.nl
-
   forge-username:
     description: Forgejo username
     required: true
     default: forgejo
-
   git-user-name:
     description: Git committer user name
     required: true
     default: "forgejo-actions[bot]"
-
   git-user-email:
     description: Git committer user email
     required: true
     default: "git@bartoostveen.nl"
-
 runs:
   using: composite
   steps:
@@ -50,7 +41,6 @@ runs:
         mkdir -p "$HOME/.ssh"
         chmod -R 700 "$HOME/.ssh"
         echo "HOME=$HOME" >> "$FORGEJO_ENV"
-
     - name: Setup SSH
       shell: bash
       if: inputs.ssh-private-key && inputs.ssh-known-hosts
@@ -80,7 +70,6 @@ runs:
         SSH_KNOWN_HOSTS: "${{ inputs.ssh-known-hosts }}"
         FORGE_HOSTNAME: "${{ inputs.forge-hostname }}"
         FORGE_USERNAME: "${{ inputs.forge-username }}"
-
     - name: import GPG key
       shell: bash
       if: inputs.gpg-privkey && inputs.gpg-key-id
@@ -91,7 +80,6 @@ runs:
       env:
         GPG_PRIVKEY: "${{ inputs.gpg-privkey }}"
         GPG_KEY_ID: "${{ inputs.gpg-key-id }}"
-
     - name: configure git
       shell: bash
       run: |
@@ -101,12 +89,12 @@ runs:
       env:
         GIT_USER_NAME: "${{ inputs.git-user-name }}"
         GIT_USER_EMAIL: "${{ inputs.git-user-email }}"
-
     - name: check
       if: inputs.ssh-private-key && inputs.ssh-known-hosts
       shell: bash
       run: |
-        git ls-remote ssh://$FORGE_USERNAME@$FORGE_HOSTNAME/$FORGEJO_REPOSITORY.git
+        git ls-remote \
+          ssh://$FORGE_USERNAME@$FORGE_HOSTNAME/$FORGEJO_REPOSITORY.git
       env:
         FORGE_HOSTNAME: "${{ inputs.forge-hostname }}"
         FORGE_USERNAME: "${{ inputs.forge-username }}"
