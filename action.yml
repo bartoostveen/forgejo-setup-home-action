@@ -68,19 +68,20 @@ runs:
 
         chmod 600 "$HOME/.ssh/config"
 
-        SSH_FLAGS=""
+        SSH_FLAGS=()
         if [[ "$VERBOSE" == "true" ]]; then
-          SSH_FLAGS="-vv $SSH_FLAGS"
+          SSH_FLAGS+=("-vv")
 
           echo "--- START SSH CONFIG ---"
           cat "$HOME/.ssh/config"
           echo "--- END SSH CONFIG ---"
         fi
+
         if [[ "$CONNECTION_TEST" == "true" ]]; then
           if [[ "$VERBOSE" == "true" ]]; then
             echo "Trying to connect..."
           fi
-          ssh "$SSH_FLAGS" -T -F "$HOME/.ssh/config" $FORGE_USERNAME@$FORGE_HOSTNAME
+          ssh "${SSH_FLAGS[@]}" -T -F "$HOME/.ssh/config" "$FORGE_USERNAME@$FORGE_HOSTNAME"
         fi
 
         export GIT_SSH_COMMAND="ssh -F "$HOME/.ssh/config""
@@ -116,7 +117,7 @@ runs:
       shell: bash
       run: |
         git ls-remote \
-          ssh://$FORGE_USERNAME@$FORGE_HOSTNAME/$FORGEJO_REPOSITORY.git
+          "ssh://$FORGE_USERNAME@$FORGE_HOSTNAME/$FORGEJO_REPOSITORY.git"
       env:
         FORGE_HOSTNAME: "${{ inputs.forge-hostname }}"
         FORGE_USERNAME: "${{ inputs.forge-username }}"
