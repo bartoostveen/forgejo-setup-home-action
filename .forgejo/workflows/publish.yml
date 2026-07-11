@@ -1,0 +1,35 @@
+name: create release dist
+"on":
+  push:
+    tags:
+      - "v*"
+jobs:
+  release:
+    runs-on: [gpg, native-x86_64-linux]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./
+        with:
+          gpg-privkey: ${{ secrets.GPG_PRIVKEY }}
+          gpg-key-id: ${{ vars.GPG_KEY_ID }}
+      - name: create archive
+        run: |
+          mkdir -p dist/release
+          cp action.yml dist/release/
+      - name: create release
+        id: release
+        uses: bart/forgejo-release@74bd5d3064257c896a1499ddcf18ac1161189d47 # v2
+        with:
+          direction: upload
+          gpg-private-key: ${{ secrets.GPG_PRIVKEY }}
+      - name: update rolling (v*) tag
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          MAJOR_VERSION=$(echo "$TAG_NAME" | cut -d. -f1)
+
+          echo "Updating rolling stream target: $MAJOR_VERSION to point to $TAG_NAME"
+
+          git tag -m "" -f "$MAJOR_VERSION" HEAD
+          git push origin "$MAJOR_VERSION" --force
