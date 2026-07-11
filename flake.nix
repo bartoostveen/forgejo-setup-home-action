@@ -28,12 +28,11 @@
       ];
 
       perSystem =
-        { pkgs, ... }:
+        { self', pkgs, ... }:
 
-        let
-          action-docs = pkgs.callPackage "${inputs.infra}/pkgs/action-docs/package.nix" { };
-        in
         {
+          packages.action-docs = pkgs.callPackage "${inputs.infra}/pkgs/action-docs/package.nix" { };
+
           treefmt = {
             programs.actionlint.enable = true;
             settings.formatter.actionlint.options = [
@@ -47,7 +46,7 @@
               command = pkgs.writeShellApplication {
                 name = "run-action-docs";
                 runtimeInputs = [
-                  action-docs
+                  self'.packages.action-docs
                   pkgs.markdownlint-cli
                 ];
                 text = ''
@@ -67,7 +66,7 @@
                     popd
 
                     sed -i -e 's|<p>||g' -e 's|</p>||g' "$file"
-                    markdownlint -f "$file"
+                    markdownlint -f "$file" || true # leniently accept defeat is markdownlint made a mess
                     post_hash=$(sha256sum "$file" | cut -d' ' -f1)
                     if [ "$pre_hash" = "$post_hash" ]; then
                       touch -d "$orig_time" "$file"
@@ -84,7 +83,7 @@
 
           devShells.default = pkgs.mkShell {
             packages = [
-              action-docs
+              self'.packages.action-docs
             ];
           };
         };

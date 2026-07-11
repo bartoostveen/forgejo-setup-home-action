@@ -1,33 +1,33 @@
 name: setup-home
-description: Setup home directory
+description: Small useful action for when you need to sign commits in CI, or need to access or push to private repos.
 author: Bart Oostveen
 inputs:
   ssh-private-key:
-    description: SSH private key
+    description: SSH private key to use, gets stored in $HOME/.ssh/id_ed25519
     required: false
   ssh-known-hosts:
-    description: SSH known hosts
+    description: SSH known hosts file, useful for locking the Git forge's public keys
     required: false
   gpg-privkey:
-    description: GPG private key
+    description: GPG private key to import in the OpenPGP keyboy
     required: false
   gpg-key-id:
-    description: GPG key ID
+    description: GPG key ID of the PGP key in `gpg-privkey`
     required: false
   forge-hostname:
-    description: Forgejo hostname
+    description: Hostname of the Git forge this action runs on, gets populated in the SSH config
     required: true
     default: git.bartoostveen.nl
   forge-username:
-    description: Forgejo username
+    description: Username of the Git forge this action runs on
     required: true
     default: forgejo
   git-user-name:
-    description: Git committer user name
+    description: Git committer username, gets used when running `git commit`
     required: true
     default: "forgejo-actions[bot]"
   git-user-email:
-    description: Git committer user email
+    description: Git committer email, gets used when running `git commit`
     required: true
     default: "git@bartoostveen.nl"
 runs:
