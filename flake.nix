@@ -8,9 +8,13 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    infra = {
-      url = "git+https://git.bartoostveen.nl/bart/infra.git";
-      flake = false; # we only want a single package, we should really migrate to a separate flake sometime
+    bart-packages = {
+      url = "git+https://git.bartoostveen.nl/bart/nix-packages.git";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        treefmt-nix.follows = "treefmt-nix";
+        flake-parts.follows = "flake-parts";
+      };
     };
   };
 
@@ -28,11 +32,16 @@
       ];
 
       perSystem =
-        { self', pkgs, ... }:
-
         {
-          packages.action-docs = pkgs.callPackage "${inputs.infra}/pkgs/action-docs/package.nix" { };
+          pkgs,
+          inputs',
+          ...
+        }:
 
+        let
+          action-docs = inputs'.bart-packages.packages.action-docs;
+        in
+        {
           treefmt = {
             programs.actionlint.enable = true;
             settings.formatter.actionlint.options = [
@@ -46,7 +55,7 @@
               command = pkgs.writeShellApplication {
                 name = "run-action-docs";
                 runtimeInputs = [
-                  self'.packages.action-docs
+                  action-docs
                   pkgs.markdownlint-cli
                 ];
                 text = ''
@@ -83,7 +92,7 @@
 
           devShells.default = pkgs.mkShell {
             packages = [
-              self'.packages.action-docs
+              action-docs
             ];
           };
         };

@@ -1,5 +1,31 @@
 {
   "nodes": {
+    "bart-packages": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784142383,
+        "narHash": "sha256-OcIOmzi0bjlGb0cvf8ihtsQYyBDuQAVtnid/o9PJjkI=",
+        "ref": "refs/heads/master",
+        "rev": "999c894cd6faff66f8baf3fcebbb4c7eb34a6fce",
+        "revCount": 4,
+        "type": "git",
+        "url": "https://git.bartoostveen.nl/bart/nix-packages.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.bartoostveen.nl/bart/nix-packages.git"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -16,22 +42,6 @@
         "owner": "hercules-ci",
         "repo": "flake-parts",
         "type": "github"
-      }
-    },
-    "infra": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1783780671,
-        "narHash": "sha256-LjMZe7wQbS6GbUZjau0K6PwaRxBDWZMH4gwZ5JT1yZM=",
-        "ref": "refs/heads/master",
-        "rev": "0ce8e2418a76a75ba51ee57126fbffc060c12995",
-        "revCount": 1050,
-        "type": "git",
-        "url": "https://git.bartoostveen.nl/bart/infra.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.bartoostveen.nl/bart/infra.git"
       }
     },
     "nixpkgs": {
@@ -67,8 +77,8 @@
     },
     "root": {
       "inputs": {
+        "bart-packages": "bart-packages",
         "flake-parts": "flake-parts",
-        "infra": "infra",
         "nixpkgs": "nixpkgs",
         "treefmt-nix": "treefmt-nix"
       }
