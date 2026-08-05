@@ -38,6 +38,10 @@ inputs:
     description: Whether to perform a connection test
     required: true
     default: "true"
+  mark-workspace-safe:
+    description: Whether to mark the repository workspace as safe for Git (safe.directory)
+    required: true
+    default: "true"
 runs:
   using: composite
   steps:
@@ -112,6 +116,10 @@ runs:
       env:
         GIT_USER_NAME: "${{ inputs.git-user-name }}"
         GIT_USER_EMAIL: "${{ inputs.git-user-email }}"
+    - name: mark workspace as safe
+      shell: bash
+      if: ${{ inputs.mark-workspace-safe == 'true' }}
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
     - name: check
       if: inputs.ssh-private-key && inputs.ssh-known-hosts
       shell: bash
