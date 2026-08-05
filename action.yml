@@ -48,7 +48,7 @@ runs:
         echo "Setting up home directory in $HOME"
         mkdir -p "$HOME/.ssh"
         chmod -R 700 "$HOME/.ssh"
-        echo "HOME=$HOME" >> "$FORGEJO_ENV"
+        echo "HOME=$HOME" >> "$GITHUB_ENV"
     - name: Setup SSH
       shell: bash
       if: inputs.ssh-private-key && inputs.ssh-known-hosts
@@ -85,7 +85,7 @@ runs:
         fi
 
         export GIT_SSH_COMMAND="ssh -F "$HOME/.ssh/config""
-        echo "GIT_SSH_COMMAND=$GIT_SSH_COMMAND" >> "$FORGEJO_ENV"
+        echo "GIT_SSH_COMMAND=$GIT_SSH_COMMAND" >> "$GITHUB_ENV"
       env:
         SSH_PRIVATE_KEY: "${{ inputs.ssh-private-key }}"
         SSH_KNOWN_HOSTS: "${{ inputs.ssh-known-hosts }}"
@@ -117,7 +117,7 @@ runs:
       shell: bash
       run: |
         git ls-remote \
-          "ssh://$FORGE_USERNAME@$FORGE_HOSTNAME/$FORGEJO_REPOSITORY.git"
+          "ssh://$FORGE_USERNAME@$FORGE_HOSTNAME/$GITHUB_REPOSITORY.git"
       env:
         FORGE_HOSTNAME: "${{ inputs.forge-hostname }}"
         FORGE_USERNAME: "${{ inputs.forge-username }}"
