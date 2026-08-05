@@ -75,6 +75,7 @@
                     popd
 
                     sed -i -e 's|<p>||g' -e 's|</p>||g' "$file"
+                    sed -i -e 's|<code>|`|g' -e 's|</code>|`|g' "$file"
                     markdownlint -f "$file" || true # leniently accept defeat if action-docs made a mess
                     post_hash=$(sha256sum "$file" | cut -d' ' -f1)
                     if [ "$pre_hash" = "$post_hash" ]; then
