@@ -42,6 +42,9 @@ inputs:
     description: Whether to mark the repository workspace as safe for Git (safe.directory)
     required: true
     default: "true"
+  nix-github-token:
+    description: Sets a GitHub token for Nix to avoid rate limiting.
+    required: false
 runs:
   using: composite
   steps:
@@ -97,6 +100,14 @@ runs:
         FORGE_USERNAME: "${{ inputs.forge-username }}"
         VERBOSE: "${{ inputs.verbose }}"
         CONNECTION_TEST: "${{ inputs.connection-test }}"
+    - name: Configure Nix GitHub token
+      shell: bash
+      if: inputs.github-token
+      run: |
+        mkdir -p "$HOME/.config/nix"
+        echo "access-tokens = github.com=$NIX_GITHUB_TOKEN" >> "$HOME/.config/nix/nix.conf"
+      env:
+        NIX_GITHUB_TOKEN: "${{ inputs.nix-github-token }}"
     - name: import GPG key
       shell: bash
       if: inputs.gpg-privkey && inputs.gpg-key-id
