@@ -102,7 +102,7 @@ runs:
         CONNECTION_TEST: "${{ inputs.connection-test }}"
     - name: Configure Nix GitHub token
       shell: bash
-      if: inputs.github-token
+      if: inputs.nix-github-token
       run: |
         mkdir -p "$HOME/.config/nix"
         echo "access-tokens = github.com=$NIX_GITHUB_TOKEN" >> "$HOME/.config/nix/nix.conf"
