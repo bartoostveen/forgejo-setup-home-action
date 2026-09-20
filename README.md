@@ -33,6 +33,7 @@ This also does a few connection tests, so your pipeline fails early if SSH is br
 | `verbose` | Whether to be verbose (log debug SSH config / connection tests) | `true` | `false` |
 | `connection-test` | Whether to perform a connection test | `true` | `true` |
 | `mark-workspace-safe` | Whether to mark the repository workspace as safe for Git (safe.directory) | `true` | `true` |
+| `nix-github-token` | Sets a GitHub token for Nix to avoid rate limiting. | `false` | `""` |
 <!-- action-docs-inputs source="action.yml" -->
 
 <!-- action-docs-outputs source="action.yml" -->
