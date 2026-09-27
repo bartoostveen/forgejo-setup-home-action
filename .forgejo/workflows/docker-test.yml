@@ -6,6 +6,11 @@ jobs:
   docker-test:
     runs-on: ubuntu-latest
     steps:
+      # TODO: remove (https://github.com/podman-container-tools/podman/issues/29805)
+      - name: Fix /var/run symlink for Podman
+        run: |
+          rm -f /var/run
+          mkdir -p /var/run
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: ./
         with:
